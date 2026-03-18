@@ -1,0 +1,38 @@
+services:
+
+  db:
+    image: mysql:5.7
+    container_name: wordpress-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqldb123
+      MYSQL_DATABASE: mysqldb
+      MYSQL_USER: mysql5
+      MYSQL_PASSWORD: mysql123
+    volumes:
+      - /mnt/mysql-data:/var/lib/mysql
+    networks:
+      - wordpress-net
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress-app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: mysql5
+      WORDPRESS_DB_PASSWORD: mysql123
+      WORDPRESS_DB_NAME: mysqldb
+    networks:
+      - wordpress-net
+
+networks:
+  wordpress-net:
